@@ -395,7 +395,7 @@ export default class extends Component {
   updateIndex = (offset, dir, cb) => {
     const state = this.state
     let index = state.index
-    const diff = offset[dir] - (this.internals.offset[dir] || 0)
+    const diff = offset[dir] - ((this.internals && this.internals.offset[dir]) || 0)
     const step = dir === 'x' ? state.width : state.height
     let loopJump = false
 
