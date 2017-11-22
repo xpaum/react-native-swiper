@@ -272,7 +272,7 @@ export default class extends Component {
   onLayout = (event) => {
     const { width, height } = Dimensions.get('window')
     const offset = this.internals.offset = { x: 0, y: 0 }
-    const state = { width, height }
+    const state = {}
 
     if (this.state.total > 1) {
       let setup = this.state.index
