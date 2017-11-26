@@ -224,12 +224,7 @@ export default class extends Component {
 
     initState.total = props.children ? props.children.length || 1 : 0
 
-    if (state.total <= initState.total && !updateIndex) {
-      // retain the index
-      initState.index = state.index
-    } else {
-      initState.index = initState.total > 1 ? Math.min(props.index, initState.total) : 0
-    }
+    initState.index = props.index
 
     // Default: horizontal
     const { width, height } = Dimensions.get('window')
@@ -399,6 +394,12 @@ export default class extends Component {
     const step = dir === 'x' ? state.width : state.height
     let loopJump = false
 
+      console.log(this.isMounting, index, parseInt(index + Math.round(diff / step)));
+    if (this.isMounting) {
+      this.internals.offset = offset
+      this.isMounting = false;
+      return;
+    }
     // Do nothing if offset no change.
     if (!diff) return
 
@@ -444,6 +445,39 @@ export default class extends Component {
       }
     } else {
       this.setState(newState, cb)
+    }
+  }
+
+  scrollTo = (index, animated = true) => {
+    if (this.internals.isScrolling || this.state.total < 2) return
+    const state = this.state
+    const diff = index
+    let x = 0
+    let y = 0
+    if (state.dir === 'x') x = diff * state.width
+    if (state.dir === 'y') y = diff * state.height
+
+    if (Platform.OS !== 'ios') {
+      this.scrollView && this.scrollView[animated ? 'setPage' : 'setPageWithoutAnimation'](diff)
+    } else {
+      this.scrollView && this.scrollView.scrollTo({ x, y, animated })
+    }
+
+    // update scroll state
+    this.internals.isScrolling = true
+    this.setState({
+      autoplayEnd: false
+    })
+
+    // trigger onScrollEnd manually in android
+    if (!animated || Platform.OS !== 'ios') {
+      setImmediate(() => {
+        this.onScrollEnd({
+          nativeEvent: {
+            position: diff
+          }
+        })
+      })
     }
   }
 
