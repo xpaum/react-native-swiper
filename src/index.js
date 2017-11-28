@@ -394,7 +394,6 @@ export default class extends Component {
     const step = dir === 'x' ? state.width : state.height
     let loopJump = false
 
-      console.log(this.isMounting, index, parseInt(index + Math.round(diff / step)));
     if (this.isMounting) {
       this.internals.offset = offset
       this.isMounting = false;
