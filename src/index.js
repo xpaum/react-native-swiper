@@ -194,7 +194,6 @@ export default class extends Component {
   loopJumpTimer = null
 
   componentWillReceiveProps(nextProps) {
-    console.log(this.props.currentTimestamp, nextProps.currentTimestamp);
     if (!nextProps.autoplay && this.autoplayTimer) clearTimeout(this.autoplayTimer)
     if (this.props.currentTimestamp
           && nextProps.currentTimestamp
