@@ -700,6 +700,7 @@ export default class extends Component {
       height
     } = this.state;
     const {
+      background,
       children,
       containerStyle,
       loop,
@@ -747,7 +748,7 @@ export default class extends Component {
           }
         } else {
           return <View style={pageStyle} key={i}>{children[page]}</View>
-        }
+          }
       })
     } else {
       pages = <View style={pageStyle} key={0}>{children}</View>
@@ -755,6 +756,7 @@ export default class extends Component {
 
     return (
       <View style={[styles.container, containerStyle]} onLayout={this.onLayout}>
+        <View style={background}/>
         {this.renderScrollView(pages)}
         {showsPagination && (renderPagination
           ? renderPagination(index, total, this)
