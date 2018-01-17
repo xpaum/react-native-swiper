@@ -194,6 +194,7 @@ export default class extends Component {
   loopJumpTimer = null
 
   componentWillReceiveProps(nextProps) {
+    console.log(this.props.currentTimestamp, nextProps.currentTimestamp);
     if (!nextProps.autoplay && this.autoplayTimer) clearTimeout(this.autoplayTimer)
     if (this.props.currentTimestamp
           && nextProps.currentTimestamp
@@ -395,7 +396,7 @@ export default class extends Component {
   updateIndex = (offset, dir, cb) => {
     const state = this.state
     let index = state.index
-    const diff = offset[dir] - ((this.internals.offset && this.internals.offset[dir]) || 0)
+    const diff = offset[dir] - (this.internals.offset && this.internals.offset[dir] || 0)
     const step = dir === 'x' ? state.width : state.height
     let loopJump = false
 
@@ -461,6 +462,15 @@ export default class extends Component {
     if (state.dir === 'x') x = diff * state.width
     if (state.dir === 'y') y = diff * state.height
 
+    // HOTFIX internals offset is not working in first scroll
+    if (!this.internals.offset || !this.internals.offset[state.dir]) {
+      if (state.dir === 'x') {
+        this.internals.offset = { x: index * state.width }
+      } else {
+        this.internals.offset = { y: index * state.height }
+      }
+    }
+
     if (Platform.OS !== 'ios') {
       this.scrollView && this.scrollView[animated ? 'setPage' : 'setPageWithoutAnimation'](diff)
     } else {
@@ -470,7 +480,8 @@ export default class extends Component {
     // update scroll state
     this.internals.isScrolling = true
     this.setState({
-      autoplayEnd: false
+        autoplayEnd: false,
+        index
     })
 
     // trigger onScrollEnd manually in android
@@ -700,7 +711,6 @@ export default class extends Component {
       height
     } = this.state;
     const {
-      background,
       children,
       containerStyle,
       loop,
@@ -748,7 +758,7 @@ export default class extends Component {
           }
         } else {
           return <View style={pageStyle} key={i}>{children[page]}</View>
-          }
+        }
       })
     } else {
       pages = <View style={pageStyle} key={0}>{children}</View>
@@ -756,7 +766,6 @@ export default class extends Component {
 
     return (
       <View style={[styles.container, containerStyle]} onLayout={this.onLayout}>
-        <View style={background}/>
         {this.renderScrollView(pages)}
         {showsPagination && (renderPagination
           ? renderPagination(index, total, this)
