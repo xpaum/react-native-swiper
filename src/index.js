@@ -194,7 +194,6 @@ export default class extends Component {
   loopJumpTimer = null
 
   componentWillReceiveProps(nextProps) {
-    console.log(this.props.currentTimestamp, nextProps.currentTimestamp);
     if (!nextProps.autoplay && this.autoplayTimer) clearTimeout(this.autoplayTimer)
     if (this.props.currentTimestamp
           && nextProps.currentTimestamp
@@ -711,6 +710,7 @@ export default class extends Component {
       height
     } = this.state;
     const {
+      background,
       children,
       containerStyle,
       loop,
@@ -766,6 +766,7 @@ export default class extends Component {
 
     return (
       <View style={[styles.container, containerStyle]} onLayout={this.onLayout}>
+        <View style={background}/>
         {this.renderScrollView(pages)}
         {showsPagination && (renderPagination
           ? renderPagination(index, total, this)
